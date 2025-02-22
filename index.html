@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قران كريم - بوت الديسكورد</title>
+    <link href="https://fonts.googleapis.com/css?family=Amiri|Montserrat" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, #003e4f, #001f2e);
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            background: rgba(40, 40, 40, 0.8);
+            padding: 30px;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .datetime {
+            border: 2px solid #2E94E3;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: background 0.5s;
+        }
+
+        .datetime:hover {
+            background: #2E94E3;
+            box-shadow: 0 0 30px #2E94E3;
+        }
+
+        .date {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .time {
+            font-size: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            letter-spacing: 3px;
+        }
+
+        .time span:not(:last-child) {
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        .time span:last-child {
+            background: #2E94E3;
+            font-size: 30px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .text {
+            font-size: 36px;
+            border: 2px solid #2E94E3;
+            border-radius: 5px;
+            margin-top: 20px;
+            padding: 10px;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .text:hover {
+            background: #2E94E3;
+            box-shadow: 0 0 20px #2E94E3;
+        }
+
+        .commands {
+            margin-top: 30px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .command {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #2E94E3;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            transition: background 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .command:hover {
+            background: #2E94E3;
+            box-shadow: 0 0 10px #2E94E3;
+        }
+
+        .command i {
+            margin-right: 10px;
+        }
+
+        .loading {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid white;
+            color: white;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .loading:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body onload="initClock()">
+    <div class="container">
+        <!--digital clock start-->
+        <div class="datetime">
+            <div class="date">
+                <span id="dayname">اليوم</span>,
+                <span id="month">الشهر</span>
+                <span id="daynum">00</span>,
+                <span id="year">السنة</span>
+            </div>
+            <div class="time">
+                <span id="hour">00</span>:
+                <span id="minutes">00</span>:
+                <span id="seconds">00</span>
+                <span id="period">ص</span>
+            </div>
+        </div>
+        <!--digital clock end-->
+
+        <div class="text">أستغفر الله</div>
+        <div class="text">كل عام وأنتم بخير</div>
+
+        <!-- Commands Section -->
+        <div class="commands">
+            <h3>الأوامر المتاحة:</h3>
+            <div class="command" onclick="playAudio()">
+                <i class="fas fa-volume-up"></i>
+                تشغيل القرآن
+            </div>
+            <div class="command" onclick="pauseAudio()">
+                <i class="fas fa-pause"></i>
+                إيقاف القرآن
+            </div>
+            <div class="command" onclick="stopAudio()">
+                <i class="fas fa-stop"></i>
+                إيقاف تشغيل القرآن
+            </div>
+            <div class="command" onclick="resetAudio()">
+                <i class="fas fa-redo"></i>
+                إعادة تشغيل
+            </div>
+            <div class="command" onclick="showHelp()">
+                <i class="fas fa-question-circle"></i>
+                المساعدة
+            </div>
+        </div>
+
+    </div>
+
+    <audio id="quranAudio" src="https://qurango.net/radio/athkar_sabah" preload="auto"></audio>
+
+    <script type="text/javascript">
+        // وظيفة لتحديث الساعة
+        function updateClock() {
+            var now = new Date();
+            var dname = now.getDay(),
+                mo = now.getMonth(),
+                dnum = now.getDate(),
+                yr = now.getFullYear(),
+                hou = now.getHours(),
+                min = now.getMinutes(),
+                sec = now.getSeconds(),
+                pe = "ص";
+
+            if (hou >= 12) {
+                pe = "م";
+            }
+            if (hou == 0) {
+                hou = 12;
+            }
+            if (hou > 12) {
+                hou = hou - 12;
+            }
+
+            Number.prototype.pad = function (digits) {
+                for (var n = this.toString(); n.length < digits; n = 0 + n);
+                return n;
+            }
+
+            var months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+            var week = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+            var ids = ["dayname", "month", "daynum", "year", "hour", "minutes", "seconds", "period"];
+            var values = [week[dname], months[mo], dnum.pad(2), yr, hou.pad(2), min.pad(2), sec.pad(2), pe];
+            for (var i = 0; i < ids.length; i++)
+                document.getElementById(ids[i]).firstChild.nodeValue = values[i];
+        }
+
+        function initClock() {
+            updateClock();
+            window.setInterval(updateClock, 1000);
+        }
+
+        // عناصر الصوت
+        const audioElement = document.getElementById('quranAudio');
+
+        // وظائف الصوت
+        function playAudio() {
+            audioElement.play();
+        }
+
+        function pauseAudio() {
+            audioElement.pause();
+        }
+
+        function stopAudio() {
+            audioElement.pause();
+            audioElement.currentTime = 0; // إعادة الصوت إلى البداية
+        }
+
+        function resetAudio() {
+            audioElement.currentTime = 0; // إعادة الصوت إلى البداية
+            audioElement.play(); // تشغيل الصوت
+        }
+
+        function showHelp() {
+            alert("الأوامر المتاحة:\n\n- تشغيل القرآن: تشغيل الصوت\n- إيقاف القرآن: إيقاف الصوت\n- إيقاف تشغيل القرآن: إيقاف الصوت وإعادته إلى البداية\n- إعادة تشغيل: إعادة الصوت وتشغيله\n- المساعدة: عرض هذه التعليمات");
+        }
+    </script>
+</body>
+
+</html>
